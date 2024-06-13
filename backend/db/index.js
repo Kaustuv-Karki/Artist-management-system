@@ -12,20 +12,22 @@ const client = new Client({
   port: 5432,
 });
 
-client
-  .connect()
-  .then(() => {
+const connectDB = async () => {
+  try {
+    await client.connect();
     console.log("Connected to the database");
-    client.query(createUserTable).then(() => {
-      console.log("Users table created successfully");
-    });
-    client.query(createArtistTable).then(() => {
-      console.log("Artists table created successfully");
-    });
-    client.query(createMusicTable).then(() => {
-      console.log("Music table created successfully");
-    });
-  })
-  .catch((err) => {
-    console.log("Error connecting to the database", err);
-  });
+
+    await client.query(createUserTable);
+    console.log("Users table created successfully");
+
+    await client.query(createArtistTable);
+    console.log("Artists table created successfully");
+
+    await client.query(createMusicTable);
+    console.log("Music table created successfully");
+  } catch (err) {
+    console.error("Error connecting to the database", err);
+  }
+};
+
+export { client, connectDB };

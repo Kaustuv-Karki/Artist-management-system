@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     gender VARCHAR(255) CHECK (gender IN ('male', 'female','other')),
-    dob DATE NOT NULL
+    dob DATE NOT NULL,
+    refresh_token VARCHAR(500)
 );
 `;
 

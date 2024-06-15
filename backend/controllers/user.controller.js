@@ -2,6 +2,7 @@ import { client } from "../db/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { generateAccessAndRefreshToken } from "../utils/generateAccessAndRefreshToken.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 export const createUser = async (req, res) => {
   const { first_name, last_name, email, password, gender, dob, phone } =
@@ -58,12 +59,12 @@ export const loginUser = async (req, res) => {
   });
 
   if (!user.rows[0]) {
-    return res.status(400).json({ message: "Invalid credentials" });
+    return ApiResponse(res, 400, false, "Invalid credentials", null);
   }
   try {
     const validPassword = await bcrypt.compare(password, user.rows[0].password);
     if (!validPassword) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return ApiResponse(res, 400, false, "Invalid credentials", null);
     }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
@@ -80,17 +81,30 @@ export const loginUser = async (req, res) => {
       secure: true,
     };
 
-    res
-      .cookie("refreshToken", refreshToken, options)
-      .cookie("accessToken", accessToken, options)
-      .status(200)
-      .json({
-        message: "Login successful",
+    // res
+    //   .cookie("refreshToken", refreshToken, options)
+    //   .cookie("accessToken", accessToken, options)
+    //   .status(200)
+    //   .json({
+    //     message: "Login successful",
+    //     accessToken: accessToken,
+    //     refreshToken: refreshToken,
+    //   });
+
+    return ApiResponse(
+      res
+        .cookie("refreshToken", refreshToken, options)
+        .cookie("accessToken", accessToken, options),
+      200,
+      true,
+      "Login successful",
+      {
         accessToken: accessToken,
         refreshToken: refreshToken,
-      });
+      }
+    );
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error });
+    return ApiResponse(res, 500, false, "Internal server error", error);
   }
 };
 

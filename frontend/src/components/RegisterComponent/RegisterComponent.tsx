@@ -127,9 +127,6 @@ const RegisterComponent = () => {
             </Button>
           </div>
         </form>
-        <Button variant="link" className="w-full text-white">
-          Create New Account
-        </Button>
       </Form>
     </div>
   );

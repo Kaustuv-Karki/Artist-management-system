@@ -9,16 +9,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import { loginUser } from "@/api/user";
 
 const LoginComponent = () => {
   const form = useForm({
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data: any) => {
+    const userResponse = await loginUser(data.email, data.password);
+    console.log(userResponse);
   };
   return (
     <div>
@@ -26,12 +28,12 @@ const LoginComponent = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormItem className="flex flex-col items-start">
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Username" {...field} />
+                  <Input placeholder="Email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

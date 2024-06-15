@@ -1,4 +1,6 @@
 import { client } from "../db/index.js";
+import csvParser from "csv-parser";
+import fs from "fs";
 
 export const createArtist = async (req, res) => {
   const {
@@ -117,5 +119,47 @@ export const deleteArtistById = async (req, res) => {
     return res.status(200).json({ message: "Artist deleted successfully" });
   } catch (error) {
     console.log({ message: "Error occurred while deleting the artist", error });
+  }
+};
+
+export const uploadArtists = async (req, res) => {
+  console.log("This is req.file", req.file.path);
+  try {
+    const results = [];
+    fs.createReadStream(req.file.path)
+      .pipe(csvParser())
+      .on("data", (row) => results.push(row))
+      .on("end", async () => {
+        console.log("This is results", results);
+        const query = `
+        INSERT INTO artists (name, dob, gender, first_release_year, address, no_of_albums_released, created_at, updated_at) 
+        VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())`;
+        await Promise.all(
+          results.map(async (artist) => {
+            const values = [
+              artist.name,
+              artist.dob,
+              artist.gender,
+              artist.first_release_year,
+              artist.address,
+              artist.no_of_albums_released,
+            ];
+            try {
+              await client.query(query, values);
+            } catch (error) {
+              console.error("Error inserting artist:", error);
+              throw error;
+            }
+          })
+        );
+        return res
+          .status(201)
+          .json({ message: "Artists uploaded successfully" });
+      })
+      .on("error", (error) => {
+        res.status(500).json({ message: "Failed to upload the csv", error });
+      });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to upload the csv", error });
   }
 };

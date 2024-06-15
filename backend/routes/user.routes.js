@@ -5,6 +5,7 @@ import {
   getUserById,
   getUsers,
   loginUser,
+  logoutUser,
   updateUser,
 } from "../controllers/user.controller.js";
 
@@ -16,5 +17,6 @@ router.put("/update", updateUser);
 router.delete("/delete", deleteUser);
 router.get("/", getUsers);
 router.get("/:id", getUserById);
+router.post("/logout", logoutUser);
 
 export default router;

@@ -4,7 +4,7 @@ export const createArtistTable = `
         name VARCHAR(255) NOT NULL,
         dob DATE NOT NULL,
         gender VARCHAR(255) CHECK (gender IN ('male', 'female','other')),
-        first_release_year DATE NOT NULL,
+        first_release_year INT NOT NULL,
         no_of_albums_released INT NOT NULL,
         address VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),

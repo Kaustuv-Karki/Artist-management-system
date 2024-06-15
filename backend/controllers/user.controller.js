@@ -128,4 +128,28 @@ export const updateUser = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => {};
+export const deleteUser = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  const userExists = await client.query({
+    text: "SELECT * FROM users WHERE email = $1",
+    values: [email],
+  });
+
+  if (!userExists.rows[0]) {
+    return res.status(400).json({ message: "User does not exist" });
+  }
+
+  try {
+    const query = `
+    DELETE FROM users WHERE email = $1`;
+    const values = [email];
+    await client.query(query, values);
+    return res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Could not delete the user", error });
+  }
+};

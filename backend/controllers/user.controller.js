@@ -153,3 +153,70 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Could not delete the user", error });
   }
 };
+
+export const getUsers = async (req, res) => {
+  try {
+    const query = `
+    SELECT * from users`;
+
+    const result = await client.query({
+      text: query,
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Users fetched successfully", data: result.rows });
+  } catch (error) {
+    res.status(500).json({ message: "Could not fetch users", error });
+  }
+};
+
+export const getUserById = async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).json({ message: "Id is required" });
+  }
+
+  try {
+    const query = `
+    SELECT * from users WHERE id = $1`;
+
+    const result = await client.query({
+      text: query,
+      values: [id],
+    });
+
+    return res
+      .status(200)
+      .json({ message: "User fetched successfully", data: result.rows });
+  } catch (error) {
+    res.status(500).json({ message: "Could not fetch user", error });
+  }
+};
+
+export const logoutUser = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  const userExists = await client.query({
+    text: "SELECT * FROM users WHERE email = $1",
+    values: [email],
+  });
+
+  if (!userExists.rows[0]) {
+    return res.status(400).json({ message: "User does not exist" });
+  }
+
+  try {
+    await client.query({
+      text: "UPDATE users SET refresh_token = $1 WHERE email = $2",
+      values: [null, email],
+    });
+
+    return res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Could not log out the user", error });
+  }
+};

@@ -43,7 +43,7 @@ export const createUser = async (req, res) => {
       .status(201)
       .json({ message: "User created successfully", data: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    return ApiResponse(res, 500, false, "Internal server error", error);
   }
 };
 

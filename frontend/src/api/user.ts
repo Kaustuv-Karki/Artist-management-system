@@ -23,10 +23,9 @@ export const loginUser = async (email: string, password: string) => {
 
 }
 
-
 export const postUser = async (data: PostUserRequest) => {
     try {
-        const response = await axios.post('http://localhost:5000/api/user', data);
+        const response = await axios.post('http://localhost:5000/api/users/', data);
         return response.data;
     }
     catch (error) {

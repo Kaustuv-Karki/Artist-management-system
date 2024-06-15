@@ -10,8 +10,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { loginUser } from "@/api/user";
+import { useNavigate } from "react-router-dom";
 
 const LoginComponent = () => {
+  const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -19,8 +21,17 @@ const LoginComponent = () => {
     },
   });
   const onSubmit = async (data: any) => {
-    const userResponse = await loginUser(data.email, data.password);
-    console.log(userResponse);
+    try {
+      const userResponse = await loginUser(data.email, data.password);
+      const { accessToken, refreshToken } = userResponse.data;
+      console.log(accessToken, refreshToken);
+      sessionStorage.setItem("accessToken", accessToken);
+      sessionStorage.setItem("refreshToken", refreshToken);
+      navigate("/dashboard");
+      form.reset();
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div>

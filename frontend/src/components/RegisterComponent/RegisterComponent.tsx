@@ -1,3 +1,4 @@
+import { postUser } from "@/api/user";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,7 +11,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import React, { useEffect } from "react";
+
 const RegisterComponent = () => {
+  const [date, setDate] = React.useState<Date>();
   const form = useForm({
     defaultValues: {
       first_name: "",
@@ -22,8 +36,14 @@ const RegisterComponent = () => {
       password: "",
     },
   });
+
+  useEffect(() => {
+    form.setValue("dob", date);
+  }, [form, date]);
+
   const onSubmit = (data: any) => {
-    console.log(data);
+    const response = postUser(data);
+    console.log(response);
   };
   return (
     <div>
@@ -97,16 +117,36 @@ const RegisterComponent = () => {
               name="dob"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start">
-                  <FormLabel>Date of Birth</FormLabel>
-                  <FormControl>
-                    <Input placeholder="DOB" {...field} />
-                  </FormControl>
-                  <FormMessage />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !date && "text-muted-foreground"
+                        )}>
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {date ? (
+                          format(date, "PPP")
+                        ) : (
+                          <span>Date of Birth</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </FormItem>
               )}
             />
           </div>
-          <div className="col-span-12">
+          <div className="col-span-6">
             <FormField
               control={form.control}
               name="phone"
@@ -115,6 +155,21 @@ const RegisterComponent = () => {
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
                     <Input placeholder="Phone Number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="col-span-6">
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start">
+                  <FormLabel>Gender</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Gender" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

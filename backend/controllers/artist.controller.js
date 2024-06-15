@@ -126,7 +126,7 @@ export const uploadArtists = async (req, res) => {
   try {
     const results = [];
     fs.createReadStream(req.file.path)
-      .pipe(csvParser())
+      .pipe(csvParser({ separator: "," }))
       .on("data", (row) => results.push(row))
       .on("end", async () => {
         console.log("This is results", results);
@@ -135,6 +135,7 @@ export const uploadArtists = async (req, res) => {
         VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())`;
         await Promise.all(
           results.map(async (artist) => {
+            console.log("These are the artist values", artist);
             const {
               name,
               dob,
@@ -151,10 +152,11 @@ export const uploadArtists = async (req, res) => {
               address,
               no_of_albums_released,
             ];
+
             try {
               await client.query(query, values);
             } catch (error) {
-              console.error("Error inserting artist:", error);
+              console.error("Error inserting artist:", error, values);
               throw error;
             }
           })

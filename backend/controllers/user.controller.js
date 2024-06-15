@@ -60,33 +60,72 @@ export const loginUser = async (req, res) => {
   if (!user.rows[0]) {
     return res.status(400).json({ message: "Invalid credentials" });
   }
+  try {
+    const validPassword = await bcrypt.compare(password, user.rows[0].password);
+    if (!validPassword) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
-  const validPassword = await bcrypt.compare(password, user.rows[0].password);
-  if (!validPassword) {
-    return res.status(400).json({ message: "Invalid credentials" });
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+      user.rows[0].email
+    );
+
+    await client.query({
+      text: "UPDATE users SET refresh_token = $1 WHERE email = $2",
+      values: [refreshToken, user.rows[0].email],
+    });
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    res
+      .cookie("refreshToken", refreshToken, options)
+      .cookie("accessToken", accessToken, options)
+      .status(200)
+      .json({
+        message: "Login successful",
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  const { first_name, last_name, email, phone } = req.body;
+  if (!first_name || !last_name || !email) {
+    return res.status(400).json({ message: "All fields are required" });
   }
 
-  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-    user.rows[0].email
-  );
-
-  await client.query({
-    text: "UPDATE users SET refresh_token = $1 WHERE email = $2",
-    values: [refreshToken, user.rows[0].email],
+  const userExists = await client.query({
+    text: "SELECT * FROM users WHERE email = $1",
+    values: [email],
   });
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
+  if (!userExists.rows[0]) {
+    return res.status(400).json({ message: "User does not exist" });
+  }
 
-  res
-    .cookie("refreshToken", refreshToken, options)
-    .cookie("accessToken", accessToken, options)
-    .status(200)
-    .json({
-      message: "Login successful",
-      accessToken: accessToken,
-      refreshToken: refreshToken,
+  try {
+    const query = `
+      UPDATE users SET first_name = $1, last_name = $2, phone = $3 WHERE email = $4
+    `;
+    const values = [first_name, last_name, phone, email];
+    await client.query(query, values);
+
+    const user = await client.query({
+      text: "SELECT * FROM users WHERE email = $1",
+      values: [email],
     });
+    return res
+      .status(200)
+      .json({ message: "User updated successfully", user: user.rows[0] });
+  } catch (error) {
+    res.status(500).json({ message: "Could not update the user", error });
+  }
 };
+
+const deleteUser = async (req, res) => {};

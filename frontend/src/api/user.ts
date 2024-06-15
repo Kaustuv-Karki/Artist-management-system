@@ -26,10 +26,11 @@ export const loginUser = async (email: string, password: string) => {
 export const postUser = async (data: PostUserRequest) => {
     try {
         const response = await axios.post('http://localhost:5000/api/users/', data);
+        toast.success('User Created Successfully');
         return response.data;
     }
     catch (error) {
-        console.error(error);
+        toast.error('User Creation Failed');
     }
 }
 

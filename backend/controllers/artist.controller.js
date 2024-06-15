@@ -123,7 +123,6 @@ export const deleteArtistById = async (req, res) => {
 };
 
 export const uploadArtists = async (req, res) => {
-  console.log("This is req.file", req.file.path);
   try {
     const results = [];
     fs.createReadStream(req.file.path)
@@ -136,13 +135,21 @@ export const uploadArtists = async (req, res) => {
         VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())`;
         await Promise.all(
           results.map(async (artist) => {
+            const {
+              name,
+              dob,
+              gender,
+              first_release_year,
+              address,
+              no_of_albums_released,
+            } = artist;
             const values = [
-              artist.name,
-              artist.dob,
-              artist.gender,
-              artist.first_release_year,
-              artist.address,
-              artist.no_of_albums_released,
+              name,
+              dob,
+              gender,
+              first_release_year,
+              address,
+              no_of_albums_released,
             ];
             try {
               await client.query(query, values);

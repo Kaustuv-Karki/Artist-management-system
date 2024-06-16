@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AddUser from "./pages/AddUser";
 import EditUser from "./pages/EditUser";
+import AddArtist from "./pages/AddArtist";
+import EditArtist from "./pages/EditArtist";
 
 function App() {
   const client = new QueryClient();
@@ -22,6 +24,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/add-user" element={<AddUser />} />
             <Route path="/edit-user/:id" element={<EditUser />} />
+            <Route path="/add-artist" element={<AddArtist />} />
+            <Route path="/edit-artist/:id" element={<EditArtist />} />
           </Routes>
         </Router>
       </QueryClientProvider>

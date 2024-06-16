@@ -1,0 +1,3 @@
+﻿id,name,dob,gender,first_release_year,address,no_of_albums_released
+2,Superman,2021-10-21T00:00:00.000Z,male,2021-10-21T00:00:00.000Z,Australia,10
+3,Barch,2020-10-21T00:00:00.000Z,female,2021-10-21T00:00:00.000Z,Austria,5

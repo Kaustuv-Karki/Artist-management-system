@@ -186,7 +186,7 @@ const Dashboard = () => {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const user = row.original;
+        const artist = row.original;
 
         return (
           <DropdownMenu>
@@ -199,14 +199,13 @@ const Dashboard = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigate(`/edit-user/${user.id}`)}>
+                onClick={() => navigate(`/edit-artist/${artist.id}`)}>
                 Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  deleteUser(user.id);
-                  queryClient.invalidateQueries(["users"]);
+                  deleteUser(artist.id);
                 }}>
                 Delete
               </DropdownMenuItem>
@@ -250,7 +249,7 @@ const Dashboard = () => {
             <Button
               type="submit"
               variant="secondary"
-              onClick={() => navigate("/add-user")}>
+              onClick={() => navigate("/add-artist")}>
               <Plus />
               Add Artist
             </Button>

@@ -18,6 +18,8 @@ import {
 import { useState } from "react";
 import { getArtists } from "@/api/artists";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 export type Payment = {
   id: string;
   dob: Date;
@@ -217,57 +219,67 @@ const Dashboard = () => {
   ];
 
   return (
-    <div>
-      <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
-        <h1 className="text-white text-[1.5rem]  font-semibold flex items-center justify-between gap-4">
-          <div>User Management </div>
-          <div>
-            <Button
-              type="submit"
-              variant="secondary"
-              onClick={() => navigate("/add-user")}>
-              <Plus />
-              Add User
-            </Button>
+    <div className="max-w-[1000px] mx-auto">
+      <Tabs defaultValue="users">
+        <TabsList className="grid w-[200px] grid-cols-2 mx-auto">
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="artists">Artists</TabsTrigger>
+        </TabsList>
+        <TabsContent value="users">
+          <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
+            <h1 className="text-white text-[1.5rem]  font-semibold flex items-center justify-between gap-4">
+              <div>User Management </div>
+              <div>
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  onClick={() => navigate("/add-user")}>
+                  <Plus />
+                  Add User
+                </Button>
+              </div>
+            </h1>
+            <div className="bg-[#121418] px-4 mt-4">
+              {!isLoading && data && (
+                <TableComponent
+                  data={data}
+                  columns={columns}
+                  isOpen={isOpen}
+                  setIsOpen={setIsOpen}
+                />
+              )}
+            </div>
           </div>
-        </h1>
-        <div className="bg-[#121418] px-4 mt-4">
-          {!isLoading && data && (
-            <TableComponent
-              data={data}
-              columns={columns}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-            />
-          )}
-        </div>
-      </div>
-      <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
-        <h1 className="text-white text-[1.5rem]  font-semibold flex items-center justify-between gap-4">
-          <div>Artist Management </div>
-          <div>
-            <Button
-              type="submit"
-              variant="secondary"
-              onClick={() => navigate("/add-artist")}>
-              <Plus />
-              Add Artist
-            </Button>
+        </TabsContent>
+        <TabsContent value="artists">
+          <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
+            <h1 className="text-white text-[1.5rem]  font-semibold flex items-center justify-between gap-4">
+              <div>Artist Management </div>
+              <div>
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  onClick={() => navigate("/add-artist")}>
+                  <Plus />
+                  Add Artist
+                </Button>
+              </div>
+            </h1>
+            <div className="bg-[#121418] px-4 mt-4">
+              <div className="bg-[#121418] px-4 mt-4">
+                {!artistLoading && data && (
+                  <TableComponent
+                    data={artistData}
+                    columns={artistColumns}
+                    isOpen={isOpen}
+                    setIsOpen={setIsOpen}
+                  />
+                )}
+              </div>
+            </div>
           </div>
-        </h1>
-        <div className="bg-[#121418] px-4 mt-4">
-          <div className="bg-[#121418] px-4 mt-4">
-            {!artistLoading && data && (
-              <TableComponent
-                data={artistData}
-                columns={artistColumns}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-              />
-            )}
-          </div>
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

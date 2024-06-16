@@ -99,6 +99,7 @@ export const loginUser = async (req, res) => {
       true,
       "Login successful",
       {
+        user: user.rows[0],
         accessToken: accessToken,
         refreshToken: refreshToken,
       }

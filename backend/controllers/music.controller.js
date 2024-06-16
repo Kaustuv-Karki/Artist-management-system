@@ -1,3 +1,5 @@
+import { client } from "../db/index.js";
+
 export const getMusic = async (req, res) => {
   try {
     const result = await client.query("SELECT * FROM music");

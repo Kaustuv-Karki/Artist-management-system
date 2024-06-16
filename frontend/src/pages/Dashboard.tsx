@@ -202,7 +202,11 @@ const Dashboard = () => {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => navigate(`/edit-artist/${artist.id}`)}>
-                Edit
+                Edit Artist
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate(`/artist/songs/${artist.id}`)}>
+                Songs
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

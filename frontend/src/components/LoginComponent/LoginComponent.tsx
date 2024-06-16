@@ -30,8 +30,6 @@ const LoginComponent = () => {
       const { accessToken, refreshToken } = userResponse.data;
       dispatch(loginSuccess(userResponse.data.user));
       dispatch(setTokens({ accessToken, refreshToken }));
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
       navigate("/dashboard");
       form.reset();
     } catch (error) {

@@ -109,14 +109,15 @@ export const loginUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-  const { first_name, last_name, email, phone } = req.body;
-  if (!first_name || !last_name || !email) {
+  const { id } = req.params;
+  const { first_name, last_name, email, phone, dob, gender } = req.body;
+  if (!first_name || !last_name || !email || !dob || !phone || !gender) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   const userExists = await client.query({
-    text: "SELECT * FROM users WHERE email = $1",
-    values: [email],
+    text: "SELECT * FROM users WHERE id = $1",
+    values: [id],
   });
 
   if (!userExists.rows[0]) {
@@ -125,14 +126,14 @@ export const updateUser = async (req, res) => {
 
   try {
     const query = `
-      UPDATE users SET first_name = $1, last_name = $2, phone = $3 WHERE email = $4
+      UPDATE users SET first_name = $1, last_name = $2, phone = $3, dob = $4, email = $5, gender = $6 WHERE id = $7
     `;
-    const values = [first_name, last_name, phone, email];
+    const values = [first_name, last_name, phone, dob, email, gender, id];
     await client.query(query, values);
 
     const user = await client.query({
-      text: "SELECT * FROM users WHERE email = $1",
-      values: [email],
+      text: "SELECT * FROM users WHERE id = $1",
+      values: [id],
     });
     return res
       .status(200)
@@ -143,14 +144,14 @@ export const updateUser = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-  const { email } = req.body;
-  if (!email) {
+  const { id } = req.params;
+  if (!id) {
     return res.status(400).json({ message: "Email is required" });
   }
 
   const userExists = await client.query({
-    text: "SELECT * FROM users WHERE email = $1",
-    values: [email],
+    text: "SELECT * FROM users WHERE id = $1",
+    values: [id],
   });
 
   if (!userExists.rows[0]) {
@@ -159,8 +160,8 @@ export const deleteUser = async (req, res) => {
 
   try {
     const query = `
-    DELETE FROM users WHERE email = $1`;
-    const values = [email];
+    DELETE FROM users WHERE id = $1`;
+    const values = [id];
     await client.query(query, values);
     return res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
@@ -209,14 +210,14 @@ export const getUserById = async (req, res) => {
 };
 
 export const logoutUser = async (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    return res.status(400).json({ message: "Email is required" });
+  const { id } = req.params;
+  if (!Id) {
+    return ApiResponse(res, 400, false, "Id is required", null);
   }
 
   const userExists = await client.query({
-    text: "SELECT * FROM users WHERE email = $1",
-    values: [email],
+    text: "SELECT * FROM users WHERE id = $1",
+    values: [id],
   });
 
   if (!userExists.rows[0]) {
@@ -225,8 +226,8 @@ export const logoutUser = async (req, res) => {
 
   try {
     await client.query({
-      text: "UPDATE users SET refresh_token = $1 WHERE email = $2",
-      values: [null, email],
+      text: "UPDATE users SET refresh_token = $1 WHERE id = $2",
+      values: [null, id],
     });
 
     return res.status(200).json({ message: "User logged out successfully" });

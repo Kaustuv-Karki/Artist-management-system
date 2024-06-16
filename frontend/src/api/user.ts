@@ -44,3 +44,39 @@ export const getUsers = async () => {
         console.error(error);
     }
 }
+
+
+export const getUserById = async (id: string) => {
+    try {
+        const response = await axios.get(`http://localhost:5000/api/users/${id}`);
+        return response.data;
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
+
+
+export const updateUser = async (id: string, data: PostUserRequest) => {
+    try {
+        const response = await axios.put(`http://localhost:5000/api/users/update/${id}`, data);
+        toast.success('User Updated Successfully');
+        return response.data;
+    }
+    catch (error) {
+        toast.error('User Update Failed');
+        console.error(error);
+    }
+}
+
+export const deleteUser = async (id: string) => {
+    try {
+        const response = await axios.delete(`http://localhost:5000/api/users/delete/${id}`);
+        toast.success('User Deleted Successfully');
+        return response.data;
+    }
+    catch (error) {
+        toast.error('User Deletion Failed');
+        console.error(error);
+    }
+}

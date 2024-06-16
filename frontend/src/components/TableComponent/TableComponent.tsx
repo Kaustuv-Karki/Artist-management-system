@@ -29,7 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export function TableComponent({ data, columns }) {
+export function TableComponent({ data, columns, isOpen, setIsOpen }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

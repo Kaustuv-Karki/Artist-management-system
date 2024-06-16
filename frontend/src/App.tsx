@@ -10,14 +10,16 @@ import AddUser from "./pages/AddUser";
 import EditUser from "./pages/EditUser";
 import AddArtist from "./pages/AddArtist";
 import EditArtist from "./pages/EditArtist";
+import Navbar from "./components/Navbar/Navbar";
 
 function App() {
   const client = new QueryClient();
   return (
     <>
       <QueryClientProvider client={client}>
-        <ToastContainer />
         <Router>
+          <Navbar />
+          <ToastContainer />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

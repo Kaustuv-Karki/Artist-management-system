@@ -11,8 +11,11 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { loginUser } from "@/api/user";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginSuccess, setTokens } from "@/redux/user/userSlice";
 
 const LoginComponent = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
@@ -23,10 +26,12 @@ const LoginComponent = () => {
   const onSubmit = async (data: any) => {
     try {
       const userResponse = await loginUser(data.email, data.password);
+      console.log("This is user response", userResponse.data.user);
       const { accessToken, refreshToken } = userResponse.data;
-      console.log(accessToken, refreshToken);
-      sessionStorage.setItem("accessToken", accessToken);
-      sessionStorage.setItem("refreshToken", refreshToken);
+      dispatch(loginSuccess(userResponse.data.user));
+      dispatch(setTokens({ accessToken, refreshToken }));
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
       navigate("/dashboard");
       form.reset();
     } catch (error) {

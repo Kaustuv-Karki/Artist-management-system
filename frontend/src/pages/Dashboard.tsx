@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
+import { getArtists } from "@/api/artists";
 
 export type Payment = {
   id: string;
@@ -38,6 +39,16 @@ const Dashboard = () => {
       return response.data;
     },
   });
+
+  const { data: artistData, isLoading: artistLoading } = useQuery({
+    queryKey: ["artists"],
+    queryFn: async () => {
+      const response = await getArtists();
+      return response.data;
+    },
+  });
+
+  console.log(artistData);
   const navigate = useNavigate();
 
   const columns = [
@@ -123,6 +134,89 @@ const Dashboard = () => {
     },
   ];
 
+  const artistColumns = [
+    {
+      accessorKey: "id",
+      header: "ID",
+      cell: ({ row }) => <div>{row.getValue("id")}</div>,
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("name")}</div>
+      ),
+    },
+    {
+      accessorKey: "dob",
+      header: "Date of Birth",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("dob")}</div>
+      ),
+    },
+    {
+      accessorKey: "first_release_year",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() =>
+              column.toggleSorting(column.getIsSorted() === "asc")
+            }>
+            First Release Year
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("first_release_year")}</div>
+      ),
+    },
+    {
+      accessorKey: "no_of_albums_released",
+      header: "Number of Albums",
+      cell: ({ row }) => <div>{row.getValue("no_of_albums_released")}</div>,
+    },
+    {
+      accessorKey: "address",
+      header: "Address",
+      cell: ({ row }) => <div>{row.getValue("address")}</div>,
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const user = row.original;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigate(`/edit-user/${user.id}`)}>
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  deleteUser(user.id);
+                  queryClient.invalidateQueries(["users"]);
+                }}>
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
   return (
     <div>
       <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
@@ -147,6 +241,32 @@ const Dashboard = () => {
               setIsOpen={setIsOpen}
             />
           )}
+        </div>
+      </div>
+      <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
+        <h1 className="text-white text-[1.5rem]  font-semibold flex items-center justify-between gap-4">
+          <div>Artist Management </div>
+          <div>
+            <Button
+              type="submit"
+              variant="secondary"
+              onClick={() => navigate("/add-user")}>
+              <Plus />
+              Add Artist
+            </Button>
+          </div>
+        </h1>
+        <div className="bg-[#121418] px-4 mt-4">
+          <div className="bg-[#121418] px-4 mt-4">
+            {!artistLoading && data && (
+              <TableComponent
+                data={artistData}
+                columns={artistColumns}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

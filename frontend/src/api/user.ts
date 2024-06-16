@@ -34,3 +34,13 @@ export const postUser = async (data: PostUserRequest) => {
     }
 }
 
+
+export const getUsers = async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/api/users/');
+        return response.data;
+    }
+    catch (error) {
+        console.error(error);
+    }
+}

@@ -178,7 +178,7 @@ const RegisterComponent = () => {
           </div>
           <div className="col-span-12">
             <Button type="submit" variant="secondary" className="w-full">
-              Log In
+              Create User
             </Button>
           </div>
         </form>

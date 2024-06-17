@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 const EditUser = () => {
   const { id } = useParams();
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-[calc(100vh-40px)]">
       <div className="flex flex-col items-center w-full md:mx-8 mx-4">
         <div className="md:mb-[3rem] mb-[1rem] flex flex-col justify-center items-center">
           <h1 className="text-white font-semibold md:text-[3rem] text-[2rem]">

@@ -2,7 +2,7 @@ import LoginComponent from "@/components/LoginComponent/LoginComponent";
 
 const Login = () => {
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-[calc(100vh-40px)]">
       <div className="flex flex-col items-center w-full">
         <div className="md:mb-[5rem] mb-[3rem] flex flex-col justify-center items-center">
           <h1 className="text-white font-semibold md:text-[3rem] text-[2rem]">

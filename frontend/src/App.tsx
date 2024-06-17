@@ -13,6 +13,7 @@ import EditArtist from "./pages/EditArtist";
 import Navbar from "./components/Navbar/Navbar";
 import PrivateRoute from "./utils/protectedRoute";
 import SongsList from "./pages/SongsList";
+import AddSong from "./pages/AddSong";
 
 function App() {
   const client = new QueryClient();
@@ -33,6 +34,7 @@ function App() {
             <Route path="/add-artist" element={<AddArtist />} />
             <Route path="/edit-artist/:id" element={<EditArtist />} />
             <Route path="/artist/songs/:artistId" element={<SongsList />} />
+            <Route path="/add-song/:artistId" element={<AddSong />} />
           </Routes>
         </Router>
       </QueryClientProvider>

@@ -1,7 +1,7 @@
 import { fetchSongsById } from "@/api/songs";
 import { TableComponent } from "@/components/TableComponent/TableComponent";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,17 +12,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Plus } from "lucide-react";
 
 const SongsList = () => {
   console.log("Songs list called");
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const { artistId } = useParams();
-  console.log("Artist id", artistId);
+
   const { data, isLoading } = useQuery({
     queryKey: ["songs", artistId],
     queryFn: () => fetchSongsById(artistId),
+    enabled: !!artistId,
   });
 
   const songsColumns = [
@@ -40,13 +41,6 @@ const SongsList = () => {
     },
     {
       accessorKey: "album_name",
-      header: "Album Name",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("album_name")}</div>
-      ),
-    },
-    {
-      accessorKey: "email",
       header: ({ column }) => {
         return (
           <Button
@@ -54,24 +48,26 @@ const SongsList = () => {
             onClick={() =>
               column.toggleSorting(column.getIsSorted() === "asc")
             }>
-            Email
+            Album name
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
       },
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue("email")}</div>
+        <div className="lowercase">{row.getValue("album_name")}</div>
       ),
     },
     {
-      accessorKey: "phone",
-      header: "Phone",
-      cell: ({ row }) => <div>{row.getValue("phone")}</div>,
+      accessorKey: "genre",
+      header: "Genre",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("genre")}</div>
+      ),
     },
     {
-      accessorKey: "dob",
-      header: "Date of Birth",
-      cell: ({ row }) => <div>{row.getValue("dob")}</div>,
+      accessorKey: "released_date",
+      header: "Released Date",
+      cell: ({ row }) => <div>{row.getValue("released_date")}</div>,
     },
     {
       id: "actions",
@@ -103,13 +99,30 @@ const SongsList = () => {
   ];
   console.log("Song data", !isLoading && data.data);
   return (
-    <div>
-      <TableComponent
-        columns={songsColumns}
-        data={data.data}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
+    <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
+      <h1 className="text-white text-[1.5rem]  font-semibold flex items-center justify-between gap-4">
+        <div>Song Management </div>
+        <div>
+          <Button
+            type="submit"
+            variant="secondary"
+            onClick={() => navigate(`/add-song/${artistId}`)}>
+            <Plus />
+            Add Song
+          </Button>
+        </div>
+      </h1>
+      <div className="bg-[#121418] px-4 mt-4">
+        {!isLoading && (
+          <TableComponent
+            columns={songsColumns}
+            data={data.data}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            filterBy="album_name"
+          />
+        )}
+      </div>
     </div>
   );
 };

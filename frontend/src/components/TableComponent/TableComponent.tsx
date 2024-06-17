@@ -29,7 +29,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export function TableComponent({ data, columns, isOpen, setIsOpen }) {
+export function TableComponent({
+  data,
+  columns,
+  isOpen,
+  setIsOpen,
+  filterBy = "email",
+}) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -67,10 +73,10 @@ export function TableComponent({ data, columns, isOpen, setIsOpen }) {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder={`Filter ${filterBy}`}
+          value={(table.getColumn(filterBy)?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn(filterBy)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

@@ -70,7 +70,10 @@ const LoginComponent = () => {
             Log In
           </Button>
         </form>
-        <Button variant="link" className="w-full text-white">
+        <Button
+          onClick={() => navigate("/register")}
+          variant="link"
+          className="w-full text-white">
           Create New Account
         </Button>
       </Form>

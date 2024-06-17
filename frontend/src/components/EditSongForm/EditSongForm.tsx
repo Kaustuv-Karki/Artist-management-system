@@ -27,11 +27,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
 const EditSongForm = () => {
-  const { artistId } = useParams();
+  const { songId } = useParams();
   const { data, isLoading } = useQuery({
-    queryKey: ["songs", artistId],
-    queryFn: () => getSongById(artistId),
-    enabled: !!artistId,
+    queryKey: ["songs", songId],
+    queryFn: () => getSongById(songId),
+    enabled: !!songId,
   });
   console.log(data);
   const [date, setDate] = React.useState<Date>();
@@ -39,14 +39,26 @@ const EditSongForm = () => {
     defaultValues: {
       title: "",
       album_name: "",
-      artist_id: artistId,
+      artist_id: songId,
       genre: "",
       released_date: "",
     },
   });
 
   useEffect(() => {
-    form.setValue("released_date", date ? format(date, "yyyy-MM-dd") : "");
+    console.log("Use effect called");
+    if (!isLoading && data) {
+      form.reset({
+        title: data?.data?.title,
+        album_name: data?.data?.album_name,
+        genre: data?.data?.genre,
+        released_date: data?.data?.released_date,
+      });
+    }
+  }, [data, isLoading, form, songId]);
+
+  useEffect(() => {
+    form.setValue("released_date", date);
   }, [form, date]);
 
   const onSubmit = (data: any) => {

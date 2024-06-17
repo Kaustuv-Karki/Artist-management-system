@@ -299,7 +299,7 @@ const Dashboard = () => {
                 </Button>
 
                 <Input
-                  className="bg-white text-black cursor-pointer h-[50px] w-[120px]"
+                  className="bg-white text-black cursor-pointer h-[50px] "
                   type="file"
                   id="fileInput"
                   onChange={handleFileChange}

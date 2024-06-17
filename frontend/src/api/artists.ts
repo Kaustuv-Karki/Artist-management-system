@@ -32,3 +32,4 @@ export const getArtistById = async (id: string) => {
         console.error(error);
     }
 }
+

@@ -22,3 +22,14 @@ export const addSong = async (data: any) => {
         throw error;
     }
 }
+
+
+export const getSongById = async (id: string) => {
+    try {
+        const response = await axios.get(`http://localhost:5000/api/music/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching song:", error);
+        throw error;
+    }
+}

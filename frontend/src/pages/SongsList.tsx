@@ -73,7 +73,7 @@ const SongsList = () => {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const user = row.original;
+        const song = row.original;
 
         return (
           <DropdownMenu>
@@ -86,7 +86,7 @@ const SongsList = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigate(`/edit-user/${user.id}`)}>
+                onClick={() => navigate(`/edit-song/${song.id}`)}>
                 Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator />

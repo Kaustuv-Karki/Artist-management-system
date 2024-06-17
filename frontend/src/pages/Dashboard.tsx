@@ -19,6 +19,9 @@ import { useState } from "react";
 import { getArtists } from "@/api/artists";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { Input } from "@/components/ui/input";
 
 export type Payment = {
   id: string;
@@ -32,6 +35,7 @@ export type Payment = {
 };
 
 const Dashboard = () => {
+  const [inputClicked, setInputClicked] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
@@ -222,6 +226,32 @@ const Dashboard = () => {
     },
   ];
 
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      toast.error("Please select a file to upload");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      await axios.post("http://localhost:5000/api/artist/upload", formData);
+      queryClient.invalidateQueries(["artists"]);
+
+      toast.success("File uploaded successfully");
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error("Error uploading file");
+    }
+  };
+
   return (
     <div className="max-w-[1000px] mx-auto">
       <Tabs defaultValue="users">
@@ -259,13 +289,26 @@ const Dashboard = () => {
           <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
             <h1 className="text-white text-[1.5rem]  font-semibold flex items-center justify-between gap-4">
               <div>Artist Management </div>
-              <div>
+              <div className="flex gap-4">
                 <Button
                   type="submit"
                   variant="secondary"
                   onClick={() => navigate("/add-artist")}>
                   <Plus />
                   Add Artist
+                </Button>
+
+                <Input
+                  className="bg-white text-black cursor-pointer h-[50px] w-[120px]"
+                  type="file"
+                  id="fileInput"
+                  onChange={handleFileChange}
+                />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleUpload}>
+                  Upload CSV
                 </Button>
               </div>
             </h1>

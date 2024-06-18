@@ -30,7 +30,7 @@ const LoginComponent = () => {
       const { accessToken, refreshToken } = userResponse.data;
       dispatch(loginSuccess(userResponse.data.user));
       dispatch(setTokens({ accessToken, refreshToken }));
-      navigate("/dashboard");
+      navigate("/");
       form.reset();
     } catch (error) {
       console.error(error);

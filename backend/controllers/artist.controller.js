@@ -172,3 +172,23 @@ export const uploadArtists = async (req, res) => {
     res.status(500).json({ message: "Failed to upload the csv", error });
   }
 };
+
+export const importArtist = async (req, res) => {
+  console.log("Import artist called");
+  try {
+    const tableName = "artists";
+    const query = `COPY ${tableName} TO STDOUT WITH CSV HEADER`;
+    const result = await client.query(query);
+
+    // Send the CSV file as response
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", 'attachment; filename="output.csv"');
+    result.rows.forEach((row) => {
+      res.write(row);
+    });
+    res.end();
+  } catch (err) {
+    console.error("Error exporting data:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

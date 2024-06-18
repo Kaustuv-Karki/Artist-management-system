@@ -81,16 +81,6 @@ export const loginUser = async (req, res) => {
       secure: true,
     };
 
-    // res
-    //   .cookie("refreshToken", refreshToken, options)
-    //   .cookie("accessToken", accessToken, options)
-    //   .status(200)
-    //   .json({
-    //     message: "Login successful",
-    //     accessToken: accessToken,
-    //     refreshToken: refreshToken,
-    //   });
-
     return ApiResponse(
       res
         .cookie("refreshToken", refreshToken, options)
@@ -147,7 +137,7 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   const { id } = req.params;
   if (!id) {
-    return res.status(400).json({ message: "Email is required" });
+    return res.status(400).json({ message: "Id is required" });
   }
 
   const userExists = await client.query({
@@ -156,7 +146,7 @@ export const deleteUser = async (req, res) => {
   });
 
   if (!userExists.rows[0]) {
-    return res.status(400).json({ message: "User does not exist" });
+    return res.status(400).json({ message: "User does not exist", userExists });
   }
 
   try {

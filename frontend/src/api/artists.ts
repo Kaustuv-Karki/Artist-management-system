@@ -33,3 +33,29 @@ export const getArtistById = async (id: string) => {
     }
 }
 
+
+
+export const deleteArtist = async (id: string) => {
+    try {
+        const response = await axios.delete(`http://localhost:5000/api/artist/${id}`);
+        toast.success('Artist Deleted Successfully');
+        return response.data;
+    }
+    catch (error) {
+        toast.error('Artist Deletion Failed');
+        console.error(error);
+    }
+}
+
+
+export const importArtist   = async () => {
+    try {
+        const response = await axios.get(`http://localhost:5000/api/artist/download`);
+        toast.success('Artist Imported Successfully');
+        return response.data;
+    }
+    catch (error) {
+        toast.error('Artist Import Failed');
+        console.error(error);
+    }
+}

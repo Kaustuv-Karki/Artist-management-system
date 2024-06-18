@@ -18,7 +18,7 @@ router.get("/download", importArtist);
 router.get("/", getArtists);
 router.get("/:id", getArtistById);
 router.put("/update/:id", updateArtistById);
-router.delete("/delete/:id", deleteArtistById);
+router.delete("/:id", deleteArtistById);
 router.post("/upload", upload.single("file"), uploadArtists);
 
 export default router;

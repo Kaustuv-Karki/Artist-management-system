@@ -16,12 +16,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { getArtists } from "@/api/artists";
+import { deleteArtist, getArtists, importArtist } from "@/api/artists";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 export type Payment = {
   id: string;
@@ -215,7 +226,8 @@ const Dashboard = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  deleteUser(artist.id);
+                  deleteArtist(artist.id);
+                  queryClient.invalidateQueries(["artists"]);
                 }}>
                 Delete
               </DropdownMenuItem>
@@ -249,6 +261,29 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error uploading file:", error);
       toast.error("Error uploading file");
+    }
+  };
+
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/artist/download",
+        {
+          method: "GET",
+        }
+      );
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "artists.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove(); // Clean up the DOM
+    } catch (error) {
+      console.error("Error downloading CSV:", error);
+      // Handle error as needed
     }
   };
 
@@ -297,19 +332,44 @@ const Dashboard = () => {
                   <Plus />
                   Add Artist
                 </Button>
-
-                <Input
-                  className="bg-white text-black cursor-pointer h-[50px] "
-                  type="file"
-                  id="fileInput"
-                  onChange={handleFileChange}
-                />
                 <Button
-                  type="button"
+                  type="submit"
                   variant="secondary"
-                  onClick={handleUpload}>
-                  Upload CSV
+                  onClick={handleDownload}>
+                  Import Artist
                 </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="text-black" variant="outline">
+                      Upload Artist CSV
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px] bg-gray-300">
+                    <DialogHeader>
+                      <DialogTitle className="text-black">
+                        Edit profile
+                      </DialogTitle>
+                      <DialogDescription className="text-black">
+                        Upload Your CSV
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <Input
+                        className="bg-white text-black cursor-pointer h-[50px] "
+                        type="file"
+                        id="fileInput"
+                        onChange={handleFileChange}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      className="bg-[#1DB954] hover:bg-[#1ed760] text-white w-full h-[50px]"
+                      variant="secondary"
+                      onClick={handleUpload}>
+                      Upload CSV
+                    </Button>
+                  </DialogContent>
+                </Dialog>
               </div>
             </h1>
             <div className="bg-[#121418] px-4 mt-4">

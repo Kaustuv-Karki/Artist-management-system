@@ -175,18 +175,45 @@ export const uploadArtists = async (req, res) => {
 
 export const importArtist = async (req, res) => {
   console.log("Import artist called");
+
   try {
     const tableName = "artists";
-    const query = `COPY ${tableName} TO STDOUT WITH CSV HEADER`;
+    const query = `
+      WITH columns AS (
+        SELECT array_agg(column_name::text) AS column_names
+        FROM information_schema.columns
+        WHERE table_name = '${tableName}'
+      )
+      SELECT
+        COALESCE(array_to_string(array_agg(to_json(t)), ','), '[]') AS data,
+        (SELECT column_names FROM columns) AS column_names
+      FROM (
+        SELECT * FROM ${tableName}
+      ) t
+    `;
     const result = await client.query(query);
 
-    // Send the CSV file as response
-    res.setHeader("Content-Type", "text/csv");
-    res.setHeader("Content-Disposition", 'attachment; filename="output.csv"');
-    result.rows.forEach((row) => {
-      res.write(row);
+    const { data, column_names } = result.rows[0];
+    // const rows = JSON.parse(data);
+    const newList = data.split("},");
+    const rows = newList.map((item, index) => {
+      if (index < newList.length - 1) {
+        return item + "}";
+      }
+      return item;
     });
-    res.end();
+
+    let csv = column_names.join(",") + "\n";
+    const parsedData = rows.map((row) => {
+      const rowData = JSON.parse(row);
+      return column_names.map((column) => rowData[column]);
+    });
+    parsedData.forEach((row) => {
+      csv += row.join(",") + "\n";
+    });
+    console.log(csv);
+
+    res.status(200).send(csv);
   } catch (err) {
     console.error("Error exporting data:", err);
     res.status(500).json({ error: "Internal Server Error" });

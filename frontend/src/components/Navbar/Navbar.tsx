@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/redux/user/userSlice";
-import { set } from "date-fns";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -19,9 +18,14 @@ import { toast } from "react-toastify";
 const Navbar = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.user);
-  const [userDetails, setUserDetails] = useState(
-    JSON.parse(state.user) || null
-  );
+  const [userDetails, setUserDetails] = useState(() => {
+    try {
+      const parsedUser = JSON.parse(state.user);
+      return parsedUser && typeof parsedUser === "object" ? parsedUser : null;
+    } catch (error) {
+      return state.user || null;
+    }
+  });
   console.log(userDetails);
   const navigate = useNavigate();
   const handleLogout = () => {

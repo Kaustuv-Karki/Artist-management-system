@@ -13,17 +13,25 @@ import { loginUser } from "@/api/user";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess, setTokens } from "@/redux/user/userSlice";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
 
 const LoginComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const form = useForm({
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
       const userResponse = await loginUser(data.email, data.password);
       console.log("This is user response", userResponse.data.user);

@@ -22,17 +22,30 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import React, { useEffect } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const RegisterSchema = z.object({
+  first_name: z.string(),
+  last_name: z.string(),
+  email: z.string().email(),
+  phone: z.string(),
+  dob: z.date().nullable(),
+  password: z.string().min(6),
+  gender: z.enum(["male", "female", "other"]),
+});
 
 const RegisterComponent = () => {
   const [date, setDate] = React.useState<Date>();
-  const form = useForm({
+  const form = useForm<z.infer<typeof RegisterSchema>>({
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
       first_name: "",
       last_name: "",
       email: "",
       phone: "",
-      gender: "",
-      dob: "",
+      gender: "male",
+      dob: null,
       password: "",
     },
   });
@@ -41,10 +54,16 @@ const RegisterComponent = () => {
     form.setValue("dob", date);
   }, [form, date]);
 
-  const onSubmit = (data: any) => {
-    const response = postUser(data);
-    console.log(response);
+  const onSubmit = (data: z.infer<typeof RegisterSchema>) => {
+    try {
+      const response = postUser(data);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  console.log(form.formState.errors);
   return (
     <div>
       <Form {...form}>

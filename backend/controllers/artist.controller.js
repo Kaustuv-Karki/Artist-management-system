@@ -118,7 +118,9 @@ export const deleteArtistById = async (req, res) => {
     await client.query(query, values);
     return res.status(200).json({ message: "Artist deleted successfully" });
   } catch (error) {
-    console.log({ message: "Error occurred while deleting the artist", error });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: error.code, error });
   }
 };
 

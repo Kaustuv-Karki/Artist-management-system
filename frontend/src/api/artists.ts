@@ -42,8 +42,11 @@ export const deleteArtist = async (id: string) => {
         return response.data;
     }
     catch (error) {
-        toast.error('Artist Deletion Failed');
-        console.error(error);
+        if(error.response.data.code === "23503"){
+            toast.error('Artist is associated with a song');
+        } 
+            toast.error('Artist Deletion Failed');
+        
     }
 }
 

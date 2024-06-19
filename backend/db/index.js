@@ -1,4 +1,5 @@
 import pkg from "pg";
+const { Pool } = pkg;
 import createUserTable from "../models/user.models.js";
 import { createArtistTable } from "../models/artist.model.js";
 import { createMusicTable } from "../models/music.model.js";
@@ -15,16 +16,9 @@ const client = new Client({
 const connectDB = async () => {
   try {
     await client.connect();
-    console.log("Connected to the database");
-
     await client.query(createUserTable);
-    console.log("Users table created successfully");
-
     await client.query(createArtistTable);
-    console.log("Artists table created successfully");
-
     await client.query(createMusicTable);
-    console.log("Music table created successfully");
   } catch (err) {
     console.error("Error connecting to the database", err);
   }

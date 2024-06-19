@@ -22,7 +22,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useEffect } from "react";
-import { addSong, getSongById, updateSong } from "@/api/songs";
+import { getSongById, updateSong } from "@/api/songs";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
@@ -39,7 +39,7 @@ const EditSongForm = () => {
     defaultValues: {
       title: "",
       album_name: "",
-      artist_id: songId,
+      artist_id: "",
       genre: "",
       released_date: "",
     },
@@ -51,6 +51,7 @@ const EditSongForm = () => {
       form.reset({
         title: data?.data?.title,
         album_name: data?.data?.album_name,
+        artist_id: data?.data?.artist_id,
         genre: data?.data?.genre,
         released_date: data?.data?.released_date,
       });
@@ -63,6 +64,7 @@ const EditSongForm = () => {
   }, [form, date]);
 
   const onSubmit = (data: any) => {
+    console.log("Data", data, "ID", songId);
     updateSong(songId, data);
     form.reset();
   };

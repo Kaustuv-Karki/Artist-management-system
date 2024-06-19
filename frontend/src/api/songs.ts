@@ -48,6 +48,7 @@ export const deleteSong = async (id: string) => {
 
 
 export const updateSong = async (id: string, data: any) => {
+    console.log("Data", data, "ID", id);
     try {
         const response = await axios.put(`http://localhost:5000/api/music/${id}`, data);
         toast.success("Song updated successfully");

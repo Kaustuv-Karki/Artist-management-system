@@ -296,7 +296,7 @@ const Dashboard = () => {
         </TabsList>
         <TabsContent value="users">
           <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
-            <h1 className="text-white text-[1.5rem]  font-semibold flex items-center justify-between gap-4">
+            <h1 className="text-white text-[1.5rem]  font-semibold flex md:flex-row  flex-col items-center md:justify-between justify-center gap-4">
               <div>User Management </div>
               <div>
                 <Button
@@ -322,9 +322,9 @@ const Dashboard = () => {
         </TabsContent>
         <TabsContent value="artists">
           <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
-            <h1 className="text-white text-[1.5rem]  font-semibold flex items-center justify-between gap-4">
+            <h1 className="text-white text-[1.5rem]  font-semibold flex md:flex-row  flex-col items-center md:justify-between justify-center gap-4">
               <div>Artist Management </div>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap items-center justify-center gap-4">
                 <Button
                   type="submit"
                   variant="secondary"

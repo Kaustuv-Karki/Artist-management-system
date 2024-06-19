@@ -30,7 +30,7 @@ const RegisterSchema = z.object({
   last_name: z.string(),
   email: z.string().email(),
   phone: z.string(),
-  dob: z.date().nullable(),
+  dob: z.date(),
   password: z.string().min(6),
   gender: z.enum(["male", "female", "other"]),
 });
@@ -44,8 +44,8 @@ const RegisterComponent = () => {
       last_name: "",
       email: "",
       phone: "",
+      dob: new Date(),
       gender: "male",
-      dob: null,
       password: "",
     },
   });

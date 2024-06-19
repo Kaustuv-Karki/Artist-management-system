@@ -24,16 +24,28 @@ import {
 } from "@/components/ui/popover";
 import { useEffect } from "react";
 import { postArtist } from "@/api/artists";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const addArtistSchema = z.object({
+  name: z.string().min(10),
+  first_release_year: z.string().nullable(),
+  address: z.string(),
+  gender: z.enum(["male", "female", "other"]),
+  dob: z.date(),
+  no_of_albums_released: z.string().min(1),
+});
 
 const AddArtistForm = () => {
   const [date, setDate] = React.useState<Date>();
-  const form = useForm({
+  const form = useForm<z.infer<typeof addArtistSchema>>({
+    resolver: zodResolver(addArtistSchema),
     defaultValues: {
       name: "",
-      first_release_year: "",
+      first_release_year: null,
       address: "",
-      gender: "",
-      dob: "",
+      gender: "male",
+      dob: new Date(),
       no_of_albums_released: "",
     },
   });
@@ -42,7 +54,7 @@ const AddArtistForm = () => {
     form.setValue("dob", date);
   }, [form, date]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: z.infer<typeof addArtistSchema>) => {
     const response = postArtist(data);
     form.reset();
     console.log(response);

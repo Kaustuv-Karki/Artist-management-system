@@ -22,7 +22,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useEffect } from "react";
-import { addSong, getSongById } from "@/api/songs";
+import { addSong, getSongById, updateSong } from "@/api/songs";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
@@ -54,6 +54,7 @@ const EditSongForm = () => {
         genre: data?.data?.genre,
         released_date: data?.data?.released_date,
       });
+      setDate(data?.data?.released_date);
     }
   }, [data, isLoading, form, songId]);
 
@@ -62,7 +63,7 @@ const EditSongForm = () => {
   }, [form, date]);
 
   const onSubmit = (data: any) => {
-    addSong(data);
+    updateSong(songId, data);
     form.reset();
   };
   return (

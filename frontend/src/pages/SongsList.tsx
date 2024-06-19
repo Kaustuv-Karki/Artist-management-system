@@ -1,4 +1,4 @@
-import { fetchSongsById } from "@/api/songs";
+import { deleteSong, fetchSongsById } from "@/api/songs";
 import { TableComponent } from "@/components/TableComponent/TableComponent";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -90,7 +90,9 @@ const SongsList = () => {
                 Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Delete</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => deleteSong(song.id)}>
+                Delete
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );

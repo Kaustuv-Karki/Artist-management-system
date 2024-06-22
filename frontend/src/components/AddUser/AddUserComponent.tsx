@@ -23,6 +23,23 @@ import {
 } from "@/components/ui/popover";
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
+
+const formSchema = z.object({
+  first_name: z.string().min(5),
+  last_name: z.string().min(5),
+  email: z.string().email(),
+  phone: z.string().min(10),
+  gender: z.enum(["male", "female", "other"]),
+  dob: z.date(),
+});
 
 const AddUserComponent = ({ id = null }) => {
   const [date, setDate] = React.useState<Date>();
@@ -32,14 +49,15 @@ const AddUserComponent = ({ id = null }) => {
     queryFn: () => getUserById(id),
     enabled: !!id,
   });
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       first_name: "",
       last_name: "",
       email: "",
       phone: "",
-      gender: "",
-      dob: "",
+      gender: "male",
+      dob: new Date(),
     },
   });
 
@@ -64,10 +82,12 @@ const AddUserComponent = ({ id = null }) => {
     form.setValue("dob", date);
   }, [form, date]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     const response = updateUser(id, data);
     console.log(data);
   };
+
+  console.log(form.formState.errors);
   return (
     <div>
       <Form {...form}>
@@ -175,9 +195,20 @@ const AddUserComponent = ({ id = null }) => {
               name="gender"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start">
-                  <FormLabel>Gender</FormLabel>
+                  <FormLabel>Genre</FormLabel>
                   <FormControl>
-                    <Input placeholder="Gender" {...field} />
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <span>{field.value || "Select gender"}</span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="rnb">Rnb</SelectItem>
+                        <SelectItem value="country">Country</SelectItem>
+                        <SelectItem value="classic">Classic</SelectItem>
+                        <SelectItem value="rock">Rock</SelectItem>
+                        <SelectItem value="jazz">Jazz</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

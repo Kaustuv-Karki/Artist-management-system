@@ -29,15 +29,30 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  title: z
+    .string()
+    .min(4, { message: "Title must be at least 4 characters long" }),
+  album_name: z
+    .string()
+    .min(5, { message: "Album name must be at least 5 characters long" }),
+  artist_id: z.string(),
+  genre: z.enum(["rnb", "country", "classic", "rock", "jazz"]),
+  released_date: z.string().min(1, { message: "Released date is required" }),
+});
 
 const AddSongForm = ({ artistId }) => {
   const [date, setDate] = React.useState<Date>();
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       album_name: "",
       artist_id: artistId,
-      genre: "",
+      genre: "rnb",
       released_date: "",
     },
   });
@@ -46,11 +61,13 @@ const AddSongForm = ({ artistId }) => {
     form.setValue("released_date", date ? format(date, "yyyy-MM-dd") : "");
   }, [form, date]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     addSong(data);
     form.reset();
     setDate(undefined);
   };
+
+  console.log(form.formState.errors);
   return (
     <div>
       <Form {...form}>

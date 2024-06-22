@@ -41,7 +41,7 @@ const LoginComponent = () => {
       navigate("/");
       form.reset();
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
   return (

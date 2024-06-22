@@ -29,14 +29,14 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/add-user" element={<AddUser />} />
+              <Route path="/edit-user/:id" element={<EditUser />} />
+              <Route path="/add-artist" element={<AddArtist />} />
+              <Route path="/edit-artist/:id" element={<EditArtist />} />
+              <Route path="/artist/songs/:artistId" element={<SongsList />} />
+              <Route path="/add-song/:artistId" element={<AddSong />} />
+              <Route path="/edit-song/:songId" element={<EditSongs />} />
             </Route>
-            <Route path="/add-user" element={<AddUser />} />
-            <Route path="/edit-user/:id" element={<EditUser />} />
-            <Route path="/add-artist" element={<AddArtist />} />
-            <Route path="/edit-artist/:id" element={<EditArtist />} />
-            <Route path="/artist/songs/:artistId" element={<SongsList />} />
-            <Route path="/add-song/:artistId" element={<AddSong />} />
-            <Route path="/edit-song/:songId" element={<EditSongs />} />
           </Routes>
         </Router>
       </QueryClientProvider>

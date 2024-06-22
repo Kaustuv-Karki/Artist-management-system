@@ -7,14 +7,15 @@ import {
   getMusicById,
   updateMusicById,
 } from "../controllers/music.controller.js";
+import { verifyJwt } from "../middleware/verifyJwt.js";
 
 const router = express.Router();
 
 router.get("/", getMusic);
-router.get("/:id", getMusicById);
-router.get("/artist/:artistId", getMusicByArtistId);
-router.post("/", createMusic);
-router.delete("/:id", deleteMusicById);
-router.put("/:id", updateMusicById);
+router.get("/:id", verifyJwt, getMusicById);
+router.get("/artist/:artistId", verifyJwt, getMusicByArtistId);
+router.post("/", verifyJwt, createMusic);
+router.delete("/:id", verifyJwt, deleteMusicById);
+router.put("/:id", verifyJwt, updateMusicById);
 
 export default router;

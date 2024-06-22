@@ -23,24 +23,42 @@ import {
 } from "@/components/ui/popover";
 import { useEffect } from "react";
 import { getSongById, updateSong } from "@/api/songs";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  title: z
+    .string()
+    .min(4, { message: "Title must be at least 4 characters long" }),
+  album_name: z
+    .string()
+    .min(5, { message: "Album name must be at least 5 characters long" }),
+  artist_id: z.string(),
+  genre: z.enum(["rnb", "country", "classic", "rock", "jazz"]),
+  released_date: z.string().min(1, { message: "Released date is required" }),
+});
+
 const EditSongForm = () => {
+  const queryClient = useQueryClient();
   const { songId } = useParams();
   const { data, isLoading } = useQuery({
     queryKey: ["songs", songId],
     queryFn: () => getSongById(songId),
     enabled: !!songId,
+    refetchOnWindowFocus: false,
   });
   console.log(data);
   const [date, setDate] = React.useState<Date>();
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       album_name: "",
       artist_id: "",
-      genre: "",
+      genre: "rnb",
       released_date: "",
     },
   });
@@ -51,7 +69,7 @@ const EditSongForm = () => {
       form.reset({
         title: data?.data?.title,
         album_name: data?.data?.album_name,
-        artist_id: data?.data?.artist_id,
+        artist_id: data?.data?.artist_id.toString(),
         genre: data?.data?.genre,
         released_date: data?.data?.released_date,
       });
@@ -63,11 +81,14 @@ const EditSongForm = () => {
     form.setValue("released_date", date);
   }, [form, date]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log("Data", data, "ID", songId);
     updateSong(songId, data);
-    form.reset();
+    queryClient.invalidateQueries(["songs", songId]);
+    queryClient.refetchQueries(["songs", songId]);
   };
+
+  console.log(form.formState.errors);
   return (
     <div>
       <Form {...form}>
@@ -157,7 +178,7 @@ const EditSongForm = () => {
           </div>
           <div className="col-span-12">
             <Button type="submit" variant="secondary" className="w-full">
-              Add Song
+              Update Song
             </Button>
           </div>
         </form>

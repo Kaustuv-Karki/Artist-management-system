@@ -47,12 +47,19 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       } catch (err) {
+        console.log("This");
         if (typeof err.response === "undefined") {
           alert(
             "A network error occurred. " +
               "This could be a CORS issue or a dropped internet connection. " +
               "It is not possible for us to know."
           );
+        } else if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
+          window.location.href = "/login";
+          console.error("Refresh token expired");
         }
         console.error("Refresh token error", err.response?.data || err.message);
       }

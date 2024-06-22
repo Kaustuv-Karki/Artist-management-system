@@ -1,10 +1,11 @@
 import { PostUserRequest } from './../../types/postUser.types';
 import {toast} from 'react-toastify';
 import axios from 'axios';
+import axiosInstance from '@/utils/axiosInterceptors';
 
 export const loginUser = async (email: string, password: string) => {
     try {
-        const response = await axios.post('http://localhost:5000/api/users/login', {
+        const response = await axiosInstance.post('http://localhost:5000/api/users/login', {
             email,
             password
         });
@@ -59,7 +60,7 @@ export const getUserById = async (id: string) => {
 
 export const updateUser = async (id: string, data: PostUserRequest) => {
     try {
-        const response = await axios.put(`http://localhost:5000/api/users/update/${id}`, data);
+        const response = await axiosInstance.put(`http://localhost:5000/api/users/update/${id}`, data);
         toast.success('User Updated Successfully');
         return response.data;
     }

@@ -229,7 +229,16 @@ export const logoutUser = async (req, res) => {
 };
 
 export const refreshToken = async (req, res) => {
-  const { refreshToken } = req.cookies;
+  let refreshToken;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
+    refreshToken = req.headers.authorization.split(" ")[1];
+  } else if (req.body.refreshToken) {
+    refreshToken = req.body.refreshToken;
+  }
 
   if (!refreshToken) {
     return ApiResponse(res, 401, false, "Refresh token is required", null);

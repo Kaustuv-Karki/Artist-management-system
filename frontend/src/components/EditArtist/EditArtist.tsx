@@ -23,7 +23,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,12 +38,19 @@ const formSchema = z.object({
 });
 
 const EditArtistForm = () => {
-  const queryCLient = useQueryClient();
+  const queryClient = useQueryClient();
   const { id } = useParams();
   const { data, isLoading } = useQuery({
     queryKey: ["artists", id],
     queryFn: () => getArtistById(id),
     enabled: !!id,
+  });
+
+  const mutation = useMutation({
+    mutationFn: (data) => editArtist(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["artists", id] });
+    },
   });
   const [date, setDate] = React.useState<Date>();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -80,12 +87,8 @@ const EditArtistForm = () => {
   }, [form, date]);
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    const response = editArtist(id, data);
-    queryCLient.invalidateQueries({ queryKey: ["artists", id] });
-    queryCLient.refetchQueries({ queryKey: ["artists", id] });
+    mutation.mutate(data);
     form.reset();
-
-    console.log(response);
   };
 
   console.log(form.formState.errors);

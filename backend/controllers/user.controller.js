@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { generateAccessAndRefreshToken } from "../utils/generateAccessAndRefreshToken.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { generateAccessToken } from "../utils/generateAccessToken.js";
 
 export const createUser = async (req, res) => {
   const { first_name, last_name, email, password, gender, dob, phone } =
@@ -224,5 +225,53 @@ export const logoutUser = async (req, res) => {
     return res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
     res.status(500).json({ message: "Could not log out the user", error });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  const { refreshToken } = req.cookies;
+
+  if (!refreshToken) {
+    return ApiResponse(res, 401, false, "Refresh token is required", null);
+  }
+
+  try {
+    const user = await client.query({
+      text: "SELECT * FROM users WHERE refresh_token = $1",
+      values: [refreshToken],
+    });
+
+    if (!user.rows[0]) {
+      return ApiResponse(res, 403, false, "Invalid refresh token", null);
+    }
+
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (err, decoded) => {
+        if (err) {
+          return ApiResponse(res, 403, false, "Invalid refresh token", null);
+        }
+
+        const accessToken = generateAccessToken(user.rows[0].email);
+
+        const options = {
+          httpOnly: true,
+          secure: true,
+        };
+
+        return ApiResponse(
+          res.cookie("accessToken", accessToken, options),
+          200,
+          true,
+          "Access token refreshed successfully",
+          {
+            accessToken,
+          }
+        );
+      }
+    );
+  } catch (error) {
+    return ApiResponse(res, 500, false, "Internal server error", error);
   }
 };

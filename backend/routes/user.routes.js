@@ -6,6 +6,7 @@ import {
   getUsers,
   loginUser,
   logoutUser,
+  refreshToken,
   updateUser,
 } from "../controllers/user.controller.js";
 
@@ -18,5 +19,6 @@ router.delete("/delete/:id", deleteUser);
 router.get("/", getUsers);
 router.get("/:id", getUserById);
 router.post("/logout", logoutUser);
+router.post("/refresh-token", refreshToken);
 
 export default router;

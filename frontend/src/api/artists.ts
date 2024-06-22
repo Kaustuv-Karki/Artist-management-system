@@ -62,3 +62,16 @@ export const importArtist   = async () => {
         console.error(error);
     }
 }
+
+
+export const editArtist = async (id: string, data: any) => {
+    try {
+        const response = await axios.put(`http://localhost:5000/api/artist/update/${id}`, data);
+        toast.success('Artist Updated Successfully');
+        return response.data;
+    }
+    catch (error) {
+        toast.error('Artist Update Failed');
+        console.error(error);
+    }
+}

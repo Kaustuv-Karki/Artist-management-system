@@ -2,10 +2,11 @@ import { getUsers } from "@/api/user";
 import { TableComponent } from "@/components/TableComponent/TableComponent";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { deleteUser } from "@/api/user";
 import { ArrowUpDown, MoreHorizontal, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { deleteUser } from "@/api/user";
 
+import { deleteArtist, getArtists } from "@/api/artists";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,23 +17,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { deleteArtist, getArtists, importArtist } from "@/api/artists";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "react-toastify";
-import axios from "axios";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 
 export type Payment = {
   id: string;
@@ -114,7 +112,7 @@ const Dashboard = () => {
     {
       accessorKey: "dob",
       header: "Date of Birth",
-      cell: ({ row }) => <div>{row.getValue("dob")}</div>,
+      cell: ({ row }) => <div>{row.getValue("dob").slice(0, 10)}</div>,
     },
     {
       id: "actions",
@@ -140,7 +138,7 @@ const Dashboard = () => {
               <DropdownMenuItem
                 onClick={() => {
                   deleteUser(user.id);
-                  queryClient.invalidateQueries(["users"]);
+                  queryClient.invalidateQueries({ queryKey: ["users"] });
                 }}>
                 Delete
               </DropdownMenuItem>
@@ -168,7 +166,7 @@ const Dashboard = () => {
       accessorKey: "dob",
       header: "Date of Birth",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("dob")}</div>
+        <div className="capitalize">{row.getValue("dob").slice(0, 10)}</div>
       ),
     },
     {
@@ -227,7 +225,7 @@ const Dashboard = () => {
               <DropdownMenuItem
                 onClick={() => {
                   deleteArtist(artist.id);
-                  queryClient.invalidateQueries(["artists"]);
+                  queryClient.invalidateQueries({ queryKey: ["artists"] });
                 }}>
                 Delete
               </DropdownMenuItem>
@@ -255,7 +253,7 @@ const Dashboard = () => {
 
     try {
       await axios.post("http://localhost:5000/api/artist/upload", formData);
-      queryClient.invalidateQueries(["artists"]);
+      queryClient.invalidateQueries({ queryKey: ["artists"] });
 
       toast.success("File uploaded successfully");
     } catch (error) {

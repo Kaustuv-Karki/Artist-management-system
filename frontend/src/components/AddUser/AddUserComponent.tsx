@@ -202,11 +202,9 @@ const AddUserComponent = ({ id = null }) => {
                         <span>{field.value || "Select gender"}</span>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="rnb">Rnb</SelectItem>
-                        <SelectItem value="country">Country</SelectItem>
-                        <SelectItem value="classic">Classic</SelectItem>
-                        <SelectItem value="rock">Rock</SelectItem>
-                        <SelectItem value="jazz">Jazz</SelectItem>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>

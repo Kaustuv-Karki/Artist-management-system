@@ -1,5 +1,5 @@
 import React from "react";
-import { getArtistById } from "@/api/artists";
+import { editArtist, getArtistById } from "@/api/artists";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -23,11 +23,22 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useEffect } from "react";
-import { postArtist } from "@/api/artists";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  name: z.string().min(5),
+  first_release_year: z.number(),
+  address: z.string().min(5),
+  gender: z.enum(["male", "female", "other"]),
+  dob: z.string(),
+  no_of_albums_released: z.number(),
+});
 
 const EditArtistForm = () => {
+  const queryCLient = useQueryClient();
   const { id } = useParams();
   const { data, isLoading } = useQuery({
     queryKey: ["artists", id],
@@ -35,14 +46,15 @@ const EditArtistForm = () => {
     enabled: !!id,
   });
   const [date, setDate] = React.useState<Date>();
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      first_release_year: "",
+      first_release_year: 2000,
       address: "",
-      gender: "",
-      dob: "",
-      no_of_albums_released: "",
+      gender: "male",
+      dob: "new Date()",
+      no_of_albums_released: 1,
     },
   });
 
@@ -59,6 +71,7 @@ const EditArtistForm = () => {
         dob: artistData.dob,
         no_of_albums_released: artistData.no_of_albums_released,
       });
+      setDate(artistData.dob);
     }
   }, [data, isLoading, form, id]);
 
@@ -66,11 +79,16 @@ const EditArtistForm = () => {
     form.setValue("dob", date);
   }, [form, date]);
 
-  const onSubmit = (data: any) => {
-    const response = postArtist(data);
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    const response = editArtist(id, data);
+    queryCLient.invalidateQueries({ queryKey: ["artists", id] });
+    queryCLient.refetchQueries({ queryKey: ["artists", id] });
     form.reset();
+
     console.log(response);
   };
+
+  console.log(form.formState.errors);
   return (
     <div>
       <Form {...form}>

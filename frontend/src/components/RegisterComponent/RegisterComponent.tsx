@@ -66,6 +66,7 @@ const RegisterComponent = () => {
     try {
       const response = postUser(data);
       console.log(response);
+      window.location.href = "/login";
     } catch (error) {
       console.error(error);
     }

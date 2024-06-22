@@ -286,7 +286,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="max-w-[1000px] mx-auto">
+    <div className="max-w-[1000px] mx-auto py-8">
       <Tabs defaultValue="users">
         <TabsList className="grid w-[200px] grid-cols-2 mx-auto">
           <TabsTrigger value="users">Users</TabsTrigger>
@@ -378,6 +378,7 @@ const Dashboard = () => {
                     columns={artistColumns}
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}
+                    filterBy="name"
                   />
                 )}
               </div>

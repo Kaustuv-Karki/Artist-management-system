@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 const AddSong = () => {
   const { artistId } = useParams();
   return (
-    <div className="flex justify-center items-center h-[calc(100vh-40px)]">
+    <div className="flex justify-center items-center h-[calc(100vh-80px)]">
       <div className="flex flex-col items-center w-full">
         <div className="md:mb-[2rem] mb-[1rem] flex flex-col justify-center items-center">
           <h1 className="text-white font-semibold md:text-[3rem] text-[2rem]">

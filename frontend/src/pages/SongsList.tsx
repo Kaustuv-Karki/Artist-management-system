@@ -67,7 +67,9 @@ const SongsList = () => {
     {
       accessorKey: "released_date",
       header: "Released Date",
-      cell: ({ row }) => <div>{row.getValue("released_date")}</div>,
+      cell: ({ row }) => (
+        <div>{row.getValue("released_date").slice(0, 10)}</div>
+      ),
     },
     {
       id: "actions",
@@ -101,7 +103,7 @@ const SongsList = () => {
   ];
   console.log("Song data", !isLoading && data.data);
   return (
-    <div className="max-w-[1000px] md:px-8 px-2 mx-auto mt-8">
+    <div className="max-w-[1000px] md:px-8 px-2 mx-auto py-8 h-[calc(100vh-80px)]">
       <h1 className="text-white text-[1.5rem]  font-semibold flex items-center justify-between gap-4">
         <div>Song Management </div>
         <div>

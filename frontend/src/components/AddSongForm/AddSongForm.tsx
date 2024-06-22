@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -9,20 +8,27 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import React from "react";
 import { useForm } from "react-hook-form";
 
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { addSong } from "@/api/songs";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { useEffect } from "react";
-import { addSong } from "@/api/songs";
 
 const AddSongForm = ({ artistId }) => {
   const [date, setDate] = React.useState<Date>();
@@ -43,6 +49,7 @@ const AddSongForm = ({ artistId }) => {
   const onSubmit = (data: any) => {
     addSong(data);
     form.reset();
+    setDate(undefined);
   };
   return (
     <div>
@@ -89,7 +96,18 @@ const AddSongForm = ({ artistId }) => {
                 <FormItem className="flex flex-col items-start">
                   <FormLabel>Genre</FormLabel>
                   <FormControl>
-                    <Input placeholder="Genre" {...field} />
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <span>{field.value || "Select Genre"}</span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="rnb">Rnb</SelectItem>
+                        <SelectItem value="country">Country</SelectItem>
+                        <SelectItem value="classic">Classic</SelectItem>
+                        <SelectItem value="rock">Rock</SelectItem>
+                        <SelectItem value="jazz">Jazz</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

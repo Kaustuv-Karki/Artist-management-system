@@ -344,9 +344,7 @@ const Dashboard = () => {
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px] bg-gray-300">
                     <DialogHeader>
-                      <DialogTitle className="text-black">
-                        Edit profile
-                      </DialogTitle>
+                      <DialogTitle className="text-black">Upload</DialogTitle>
                       <DialogDescription className="text-black">
                         Upload Your CSV
                       </DialogDescription>

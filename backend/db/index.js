@@ -5,6 +5,33 @@ import { createArtistTable } from "../models/artist.model.js";
 import { createMusicTable } from "../models/music.model.js";
 const { Client } = pkg;
 
+const createDatabase = async () => {
+  const defaultClient = new Client({
+    host: "localhost",
+    user: "postgres",
+    password: "postgres",
+    database: "postgres",
+    port: 5432,
+  });
+
+  try {
+    await defaultClient.connect();
+    const res = await defaultClient.query(
+      `SELECT 1 FROM pg_database WHERE datname='artist_db'`
+    );
+    if (res.rowCount === 0) {
+      await defaultClient.query("CREATE DATABASE artist_db");
+      console.log("Database 'artist_db' created successfully.");
+    } else {
+      console.log("Database 'artist_db' already exists.");
+    }
+  } catch (err) {
+    console.error("Error creating the database", err);
+  } finally {
+    await defaultClient.end();
+  }
+};
+
 const client = new Client({
   host: "localhost",
   user: "postgres",
@@ -15,6 +42,7 @@ const client = new Client({
 
 const connectDB = async () => {
   try {
+    await createDatabase();
     await client.connect();
     await client.query(createUserTable);
     await client.query(createArtistTable);

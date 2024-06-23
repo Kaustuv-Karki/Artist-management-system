@@ -9,7 +9,7 @@ const AddUser = () => {
           </h1>
         </div>
         <div className="max-w-[600px] w-full border md:px-8 md:py-10 px-4 py-5">
-          <RegisterComponent />
+          <RegisterComponent newUser="false" />
         </div>
       </div>
     </div>

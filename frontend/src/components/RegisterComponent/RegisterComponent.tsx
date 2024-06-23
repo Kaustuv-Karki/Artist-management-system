@@ -43,7 +43,7 @@ const RegisterSchema = z.object({
   gender: z.enum(["male", "female", "other"]),
 });
 
-const RegisterComponent = () => {
+const RegisterComponent = ({ newUser = "true" }) => {
   const [date, setDate] = React.useState<Date>();
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
@@ -66,7 +66,11 @@ const RegisterComponent = () => {
     try {
       const response = postUser(data);
       console.log(response);
-      window.location.href = "/login";
+      if (newUser === "true") {
+        window.location.href = "/login";
+      } else {
+        window.location.href = "/";
+      }
     } catch (error) {
       console.error(error);
     }

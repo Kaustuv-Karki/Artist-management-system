@@ -132,7 +132,7 @@ const AddUserComponent = ({ id = null }) => {
                 <FormItem className="flex flex-col items-start">
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Email" {...field} />
+                    <Input disabled placeholder="Email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

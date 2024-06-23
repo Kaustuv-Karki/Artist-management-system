@@ -1,4 +1,5 @@
 import { client } from "../db/index.js";
+import { musicValidation } from "../validation/music.validation.js";
 
 export const getMusic = async (req, res) => {
   try {
@@ -43,6 +44,11 @@ export const getMusicByArtistId = async (req, res) => {
 
 export const createMusic = async (req, res) => {
   const { title, album_name, artist_id, genre, released_date } = req.body;
+  const { error } = musicValidation(req.body);
+  if (error) {
+    const errorMessages = error.details.map((detail) => detail.message);
+    return res.status(400).json({ message: errorMessages });
+  }
   const query = `
     INSERT INTO music (title, album_name, artist_id, genre, released_date)
     VALUES ($1, $2, $3, $4, $5)

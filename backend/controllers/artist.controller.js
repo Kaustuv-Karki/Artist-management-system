@@ -1,6 +1,7 @@
 import { client } from "../db/index.js";
 import csvParser from "csv-parser";
 import fs from "fs";
+import { artistValidation } from "../validation/artist.validation.js";
 
 export const createArtist = async (req, res) => {
   const {
@@ -11,6 +12,12 @@ export const createArtist = async (req, res) => {
     address,
     no_of_albums_released,
   } = req.body;
+
+  const { error } = artistValidation(req.body);
+  if (error) {
+    const errorMessages = error.details.map((detail) => detail.message);
+    return res.status(400).json({ message: errorMessages });
+  }
 
   const artistExists = await client.query({
     text: "SELECT * FROM artists WHERE name = $1",
@@ -78,6 +85,12 @@ export const updateArtistById = async (req, res) => {
     address,
     no_of_albums_released,
   } = req.body;
+
+  const { error } = artistValidation(req.body);
+  if (error) {
+    const errorMessages = error.details.map((detail) => detail.message);
+    return res.status(400).json({ message: errorMessages });
+  }
 
   const artistExists = await client.query({
     text: "SELECT * FROM artists WHERE id = $1",

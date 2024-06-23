@@ -4,12 +4,19 @@ import jwt from "jsonwebtoken";
 import { generateAccessAndRefreshToken } from "../utils/generateAccessAndRefreshToken.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { generateAccessToken } from "../utils/generateAccessToken.js";
+import {
+  loginValidation,
+  registerValidation,
+  updateUserValidation,
+} from "../validation/user.validation.js";
 
 export const createUser = async (req, res) => {
   const { first_name, last_name, email, password, gender, dob, phone } =
     req.body;
-  if (!first_name || !last_name || !email || !phone || !password || !dob) {
-    return res.status(400).json({ message: "All fields are required" });
+  const { error } = registerValidation(req.body);
+  if (error) {
+    const errorMessages = error.details.map((detail) => detail.message);
+    return res.status(400).json({ message: errorMessages });
   }
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -49,6 +56,11 @@ export const createUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
+  const { error } = loginValidation(req.body);
+  if (error) {
+    const errorMessages = error.details.map((detail) => detail.message);
+    return res.status(400).json({ message: errorMessages });
+  }
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ message: "All fields are required" });
@@ -102,9 +114,13 @@ export const loginUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { first_name, last_name, email, phone, dob, gender } = req.body;
-  if (!first_name || !last_name || !email || !dob || !phone || !gender) {
-    return res.status(400).json({ message: "All fields are required" });
+  const { first_name, last_name, phone, dob, gender } = req.body;
+
+  const { error } = updateUserValidation(req.body);
+
+  if (error) {
+    const errorMessages = error.details.map((detail) => detail.message);
+    return res.status(400).json({ message: errorMessages });
   }
 
   const userExists = await client.query({
@@ -118,9 +134,9 @@ export const updateUser = async (req, res) => {
 
   try {
     const query = `
-      UPDATE users SET first_name = $1, last_name = $2, phone = $3, dob = $4, email = $5, gender = $6 WHERE id = $7
+      UPDATE users SET first_name = $1, last_name = $2, phone = $3, dob = $4, gender = $5 WHERE id = $6
     `;
-    const values = [first_name, last_name, phone, dob, email, gender, id];
+    const values = [first_name, last_name, phone, dob, gender, id];
     await client.query(query, values);
 
     const user = await client.query({

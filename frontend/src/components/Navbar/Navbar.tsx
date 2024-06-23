@@ -43,7 +43,12 @@ const Navbar = () => {
   return (
     <>
       {userDetails && (
-        <div className="flex justify-end  py-4 md:px-12 px-6">
+        <div className="flex justify-between items-center py-4 md:px-12 px-6">
+          <div
+            className="text-white font-bold text-[1.2rem] hover:underline cursor-pointer"
+            onClick={() => navigate("/")}>
+            HOME
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Button

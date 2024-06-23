@@ -1,4 +1,4 @@
-import { PostUserRequest } from "./../../types/postUser.types";
+import { PostUserRequest } from "../types/postUser.types";
 import { toast } from "react-toastify";
 import axios from "axios";
 import axiosInstance from "@/utils/axiosInterceptors";

@@ -7,11 +7,11 @@ const { Client } = pkg;
 
 const createDatabase = async () => {
   const defaultClient = new Client({
-    host: "localhost",
-    user: "postgres",
-    password: "postgres",
-    database: "postgres",
-    port: 5432,
+    host: process.env.DB_HOST,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
+    port: process.env.DB_PORT,
   });
 
   try {
@@ -33,11 +33,11 @@ const createDatabase = async () => {
 };
 
 const client = new Client({
-  host: "localhost",
-  user: "postgres",
-  password: "postgres",
-  database: "artist_db",
-  port: 5432,
+  host: process.env.DB_HOST,
+  user: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DB,
+  port: process.env.DB_PORT,
 });
 
 const connectDB = async () => {

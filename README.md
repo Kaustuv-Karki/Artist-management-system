@@ -1,3 +1,4 @@
+COMPLETED
 ![image](https://github.com/Kaustuv-Karki/Artist-management-system/assets/64625795/3c85aad9-fdda-4bdf-9a68-1f9e8291d731)
 ![image](https://github.com/Kaustuv-Karki/Artist-management-system/assets/64625795/9b3c83c4-4c8b-4d40-800b-54926d946b65)
 ![image](https://github.com/Kaustuv-Karki/Artist-management-system/assets/64625795/8f0f3f2a-c08e-49a1-b9ad-7fbfce675490)
